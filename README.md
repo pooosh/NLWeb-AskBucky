@@ -5,23 +5,23 @@
   <h3>Customized NLWeb Framework for AskBucky Dining Assistant</h3>
   <p>A specialized fork of Microsoft's NLWeb framework, enhanced with comprehensive dining hall menu processing, automation workflows, and UW-Madison specific customizations.</p>
   
-  <a href="#overview">Overview</a> •
-  <a href="#customizations">Customizations</a> •
-  <a href="#workflow">Workflow</a> •
-  <a href="#automation">Automation</a> •
-  <a href="#usage">Usage</a>
+  <a href="#-overview">Overview</a> •
+  <a href="#-customizations">Customizations</a> •
+  <a href="#-workflow">Workflow</a> •
+  <a href="#-automation">Automation</a> •
+  <a href="#-usage">Usage</a>
 </div>
 
 ## 📋 Table of Contents
 
-- [Overview](#overview)
-- [Customizations](#customizations)
-- [Data Pipeline](#data-pipeline)
-- [Automation Scripts](#automation-scripts)
-- [Configuration](#configuration)
-- [Usage](#usage)
-- [Architecture](#architecture)
-- [Contributing](#contributing)
+- [Overview](#-overview)
+- [Customizations](#-customizations)
+- [Data Pipeline](#-data-pipeline)
+- [Automation Scripts](#-automation-scripts)
+- [Configuration](#-configuration)
+- [Usage](#-usage)
+- [Architecture](#-architecture)
+- [Contributing](#-contributing)
 
 ## 🎯 Overview
 
