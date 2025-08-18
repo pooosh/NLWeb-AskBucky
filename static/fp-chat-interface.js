@@ -194,6 +194,17 @@ class ModernChatInterface {
         modeDropdown.classList.remove('show');
       }
     });
+    
+    // Feedback chip
+    const feedbackChip = document.getElementById('feedback-chip');
+    if (feedbackChip) {
+      feedbackChip.addEventListener('click', (e) => {
+        e.preventDefault();
+        // Replace this URL with your Google Form link
+        const feedbackUrl = 'https://forms.gle/eZrJ5zyoJzoeGNSN7';
+        window.open(feedbackUrl, '_blank', 'noopener,noreferrer');
+      });
+    }
   }
   
   createNewChat(existingInputElementId = null, site = null) {
