@@ -27,6 +27,19 @@ def daily():
     print(f"📅 Today: {today}", flush=True)
     print(f"📅 Yesterday: {yesterday}", flush=True)
 
+    # Check required environment variables for fetch_menu.py
+    required_vars = ["NUTRISLICE_API_URL", "DINING_HALL_SLUGS", "MEAL_TYPES", "RAW_DIR"]
+    missing_vars = [var for var in required_vars if not os.environ.get(var)]
+    if missing_vars:
+        print(f"❌ Missing required environment variables: {missing_vars}", flush=True)
+        print("Available environment variables:", flush=True)
+        for key, value in os.environ.items():
+            if any(prefix in key for prefix in ["NUTRISLICE", "DINING", "MEAL", "RAW", "JSONLD"]):
+                print(f"  {key}: {value}", flush=True)
+        raise SystemExit(1)
+
+    print("✅ All required environment variables are set", flush=True)
+
     # 1) Make sure JSON-LD for today exists in this container
     run(["python", "fetch_menu.py"], cwd=PYSCRIPTS_DIR)
     run(["python", "nutrislice_to_jsonld.py"], cwd=PYSCRIPTS_DIR)
