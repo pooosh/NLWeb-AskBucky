@@ -13,6 +13,8 @@ import os
 import sys
 from dotenv import load_dotenv
 from qdrant_client import QdrantClient
+from aiohttp import web
+from qdrant_store import search as qsearch
 
 QDRANT_URL = os.environ.get("QDRANT_URL")
 QDRANT_API_KEY = os.environ.get("QDRANT_API_KEY")
@@ -60,6 +62,29 @@ async def main():
     server = AioHTTPServer()
 
     print(f"Starting aiohttp server on {host}:{port} ...")
+
+    # Add search routes to the app
+    routes = web.RouteTableDef()
+
+    @routes.get("/v1/search")
+    async def http_search(request: web.Request):
+        q = request.query.get("q", "").strip()
+        sitetag = request.query.get("sitetag")
+        if not q:
+            return web.json_response({"error": "missing q"}, status=400)
+        hits = qsearch(q, top_k=8, sitetag=sitetag)
+        out = []
+        for h in hits:
+            out.append({
+                "id": str(h.id),
+                "score": h.score,
+                "payload": h.payload,
+            })
+        return web.json_response({"results": out})
+
+    # Get the app instance and add routes
+    app = await server.create_app()
+    app.add_routes(routes)
 
     # Prefer explicit host/port; fall back to env-only if older signature
     try:

@@ -22,6 +22,8 @@ def setup_api_routes(app: web.Application):
     # Info endpoints
     app.router.add_get('/who', who_handler)
     app.router.add_get('/sites', sites_handler)
+    
+
 
 
 async def ask_handler(request: web.Request) -> web.Response:
@@ -194,5 +196,8 @@ async def sites_handler(request: web.Request) -> web.Response:
             "error": f"Failed to get sites: {str(e)}"
         }
         return web.json_response(error_data, status=500)
+
+
+
 
 
