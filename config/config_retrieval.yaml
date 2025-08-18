@@ -1,4 +1,4 @@
-write_endpoint: qdrant_local
+write_endpoint: qdrant_cloud
 
 endpoints:
 
@@ -99,7 +99,7 @@ endpoints:
 
   # Option 1: Local file-based Qdrant storage
   qdrant_local:
-    enabled: true
+    enabled: false
     # Use local file-based storage with a specific path
     database_path: "../code/data/db"
     # Set the collection name to use
@@ -107,12 +107,12 @@ endpoints:
     # Specify the database type
     db_type: qdrant
     
-  # Option 2: Remote Qdrant server
-  qdrant_url:
-    enabled: false
-    # Connect to a Qdrant server at a specific URL
+  # Option 2: Remote Qdrant server (Qdrant Cloud)
+  qdrant_cloud:
+    enabled: true
+    # Connect to Qdrant Cloud at a specific URL
     api_endpoint_env: QDRANT_URL
-    # Optional API key for authentication
+    # API key for authentication (required for Qdrant Cloud)
     api_key_env: QDRANT_API_KEY
     # Set the collection name to use
     index_name: nlweb_collection

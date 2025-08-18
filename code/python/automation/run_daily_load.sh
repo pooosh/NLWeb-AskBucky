@@ -32,7 +32,7 @@ if [[ -d "$JSONLD_DIR" ]]; then
 fi
 
 # Helpful for SSL on macOS cron (harmless elsewhere)
-export SSL_CERT_FILE="$(python - <<'PY'
+export SSL_CERT_FILE=$(python - <<'PY'
 try:
     import certifi; print(certifi.where())
 except Exception:
@@ -81,7 +81,7 @@ loaded=0
 while IFS= read -r -d '' file; do
   found=1
   echo "• $file"
-  if python -m data_loading.db_load --force-recompute --batch-size 64 --database qdrant_local "$file" "$SITE_TODAY"; then
+  if python -m data_loading.db_load --force-recompute --batch-size 64 --database qdrant_cloud "$file" "$SITE_TODAY"; then
     loaded=$((loaded+1))
   else
     echo "  ! failed to load: $file"

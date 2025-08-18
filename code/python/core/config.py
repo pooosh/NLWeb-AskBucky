@@ -874,7 +874,7 @@ class AppConfig:
             )
             self.conversation_storage_behavior = StorageBehaviorConfig()
             self.conversation_storage_endpoints = {}
-            self.conversation_storage_default = "qdrant_local"
+            self.conversation_storage_default = "qdrant_cloud"
 
 # Global singleton
 CONFIG = AppConfig()

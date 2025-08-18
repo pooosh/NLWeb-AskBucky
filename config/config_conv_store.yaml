@@ -2,14 +2,14 @@
 # This file configures where and how conversation history is stored
 
 # Default storage endpoint to use
-default_storage: qdrant_local
+default_storage: qdrant_cloud
 
 # Storage endpoints configuration
 storage_endpoints:
   
-  # Local Qdrant storage (default)
+  # Local Qdrant storage
   qdrant_local:
-    enabled: true
+    enabled: false
     type: qdrant
     # Local file-based storage path
     database_path: "../data/conversations_db"
@@ -18,14 +18,14 @@ storage_endpoints:
     # Vector size for embeddings
     vector_size: 1536
     
-  # Remote Qdrant server
-  qdrant_remote:
-    enabled: false
+  # Qdrant Cloud storage
+  qdrant_cloud:
+    enabled: true
     type: qdrant
-    # Qdrant server URL (from environment variable)
-    url_env: QDRANT_CONVERSATIONS_URL
+    # Qdrant Cloud URL (from environment variable)
+    url_env: QDRANT_URL
     # API key for authentication (from environment variable)
-    api_key_env: QDRANT_CONVERSATIONS_API_KEY
+    api_key_env: QDRANT_API_KEY
     # Collection name for conversations
     collection_name: nlweb_conversations
     # Vector size for embeddings

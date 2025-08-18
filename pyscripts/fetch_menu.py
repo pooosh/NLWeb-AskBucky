@@ -15,7 +15,11 @@ load_dotenv()
 BASE_URL       = os.getenv("NUTRISLICE_API_URL", "").rstrip("/")
 HALLS          = [s.strip() for s in os.getenv("DINING_HALL_SLUGS", "").split(",") if s.strip()]
 MEALS          = [s.strip() for s in os.getenv("MEAL_TYPES", "").split(",") if s.strip()]
-RAW_ROOT       = Path(os.getenv("RAW_DIR", "raw_menus"))
+# Get the script's directory and resolve paths relative to NLWeb root
+SCRIPT_DIR = Path(__file__).parent
+NLWEB_ROOT = SCRIPT_DIR.parent
+raw_dir_env = os.getenv("RAW_DIR", str(NLWEB_ROOT / "raw_menus"))
+RAW_ROOT = Path(raw_dir_env) if Path(raw_dir_env).is_absolute() else NLWEB_ROOT / raw_dir_env
 
 if not (BASE_URL and HALLS and MEALS):
     raise RuntimeError("Check .env — NUTRISLICE_API_URL, DINING_HALL_SLUGS and MEAL_TYPES are required")

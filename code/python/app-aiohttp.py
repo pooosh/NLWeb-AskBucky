@@ -12,6 +12,14 @@ import asyncio
 import os
 import sys
 from dotenv import load_dotenv
+from qdrant_client import QdrantClient
+
+QDRANT_URL = os.environ.get("QDRANT_URL")
+QDRANT_API_KEY = os.environ.get("QDRANT_API_KEY")
+
+qdrant = None
+if QDRANT_URL:
+    qdrant = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY, timeout=30.0)
 
 
 async def main():

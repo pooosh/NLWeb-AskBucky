@@ -160,16 +160,6 @@ body {
   border-bottom: 1px solid var(--border-color);
 }
 
-.sidebar-footer {
-  padding: 16px;
-  border-top: 1px solid var(--border-color);
-  text-align: center;
-  font-size: 14px;
-  color: var(--text-secondary);
-  font-weight: 600;
-  margin-top: auto;
-}
-
 /* Feedback Chip Styles */
 .feedback-chip {
   display: inline-flex;
@@ -207,6 +197,7 @@ body {
   margin-right: 6px;
   flex-shrink: 0;
 }
+
 
 /* Conversations List Components */
 .conversations-header {

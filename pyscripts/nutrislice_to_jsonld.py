@@ -24,8 +24,13 @@ from typing import Tuple, List
 from dotenv import load_dotenv
 
 load_dotenv()
-RAW_DIR    = Path(os.getenv("RAW_DIR", "raw_menus"))
-JSONLD_DIR = Path(os.getenv("JSONLD_DIR", "data/jsonld"))
+# Get the script's directory and resolve paths relative to NLWeb root
+SCRIPT_DIR = Path(__file__).parent
+NLWEB_ROOT = SCRIPT_DIR.parent
+raw_dir_env = os.getenv("RAW_DIR", str(NLWEB_ROOT / "raw_menus"))
+jsonld_dir_env = os.getenv("JSONLD_DIR", str(NLWEB_ROOT / "data" / "jsonld"))
+RAW_DIR = Path(raw_dir_env) if Path(raw_dir_env).is_absolute() else NLWEB_ROOT / raw_dir_env
+JSONLD_DIR = Path(jsonld_dir_env) if Path(jsonld_dir_env).is_absolute() else NLWEB_ROOT / jsonld_dir_env
 JSONLD_DIR.mkdir(parents=True, exist_ok=True)
 
 # ── helpers ────────────────────────────────────────────────────────────────
@@ -109,9 +114,10 @@ def transform_menu(raw_json: dict, hall_slug: str, meal_type: str) -> List[Tuple
                     continue
 
                 # numeric grams
-                grams = size.get("serving_size_grams")
-                if not grams and size.get("serving_size_unit", "").lower().startswith("oz"):
-                    grams = oz_to_g(size.get("serving_size_amount", 0))
+                grams = size.get("serving_size_grams") if size else None
+                serving_size_unit = size.get("serving_size_unit", "") if size else ""
+                if not grams and serving_size_unit and serving_size_unit.lower().startswith("oz"):
+                    grams = oz_to_g(size.get("serving_size_amount", 0) if size else 0)
 
                 # diet tags
                 tags = [ico.get("slug") or ico.get("synced_name")
