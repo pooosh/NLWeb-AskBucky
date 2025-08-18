@@ -114,7 +114,17 @@ def main():
         text = extract_text(data).strip()
         if not text:
             continue
-        emb = oai.embeddings.create(model=MODEL, input=text).data[0].embedding
+        
+        # Generate embedding with error handling
+        try:
+            response = oai.embeddings.create(model=MODEL, input=text)
+            emb = response.data[0].embedding
+            if not emb:
+                print(f"Warning: Empty embedding for {fp.name}")
+                continue
+        except Exception as e:
+            print(f"Error generating embedding for {fp.name}: {e}")
+            continue
         
         # Parse site and meal from filename
         name = fp.name.rsplit(".", 1)[0]
