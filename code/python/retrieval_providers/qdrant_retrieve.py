@@ -96,9 +96,20 @@ def create_site_filter(site):
     else:
         sites = []
 
-    return models.Filter(
-        must=[models.FieldCondition(key="site", match=models.MatchAny(any=sites))]
-    )
+    # Check if this looks like a sitetag (contains date pattern like menus_YYYY-MM-DD)
+    import re
+    sitetag_pattern = re.compile(r'menus_\d{4}-\d{2}-\d{2}')
+    
+    if len(sites) == 1 and sitetag_pattern.match(sites[0]):
+        # This is a sitetag, filter by sitetag field
+        return models.Filter(
+            must=[models.FieldCondition(key="sitetag", match=models.MatchValue(value=sites[0]))]
+        )
+    else:
+        # These are individual site names, filter by site field
+        return models.Filter(
+            must=[models.FieldCondition(key="site", match=models.MatchAny(any=sites))]
+        )
 
 
 def format_results(search_result):
