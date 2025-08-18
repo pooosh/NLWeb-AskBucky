@@ -115,7 +115,7 @@ endpoints:
     # API key for authentication (required for Qdrant Cloud)
     api_key_env: QDRANT_API_KEY
     # Set the collection name to use
-    index_name: nlweb_collection
+    index_name: askbucky
     # Specify the database type
     db_type: qdrant
 
