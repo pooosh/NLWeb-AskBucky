@@ -63,6 +63,16 @@ def main():
             collection_name=COLL,
             vectors_config=models.VectorParams(size=emb_dim, distance=models.Distance.COSINE),
         )
+    # ensure we can filter by sitetag (needed for deletes)
+    try:
+        qd.create_payload_index(
+            collection_name=COLL,
+            field_name="sitetag",
+            field_schema=models.PayloadSchemaType.KEYWORD,
+        )
+    except Exception:
+        # already exists or benign error – ignore
+        pass
 
     # 1) delete yesterday’s points
     y_tag = f"menus_{args.yesterday}"
