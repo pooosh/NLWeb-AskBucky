@@ -16,7 +16,7 @@ def validate_env():
 
 JSONLD_DIR = os.getenv("JSONLD_DIR", "../../data/jsonld")
 MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
-COLL = os.getenv("QDRANT_COLLECTION", "nlweb_documents")
+COLL = os.getenv("QDRANT_COLLECTION", "askbucky")
 
 def iter_jsonld_files(root: Path, date_str: str) -> Iterable[Path]:
     for p in root.rglob("*.json"):
