@@ -14,7 +14,7 @@ def validate_env():
         print(f"❌ Missing required environment variables: {', '.join(missing)}", file=sys.stderr)
         sys.exit(1)
 
-JSONLD_DIR = os.getenv("JSONLD_DIR", "data/jsonld")
+JSONLD_DIR = os.getenv("JSONLD_DIR", "../../data/jsonld")
 MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
 COLL = os.getenv("QDRANT_COLLECTION", "nlweb_documents")
 
@@ -74,9 +74,15 @@ def main():
 
     # 2) upsert today’s points
     t_tag = f"menus_{args.today}"
-    files = list(iter_jsonld_files(Path(JSONLD_DIR), args.today))
+    jsonld_path = Path(JSONLD_DIR)
+    if not jsonld_path.exists():
+        raise SystemExit(f"JSONLD directory does not exist: {jsonld_path}")
+    
+    files = list(iter_jsonld_files(jsonld_path, args.today))
     if not files:
-        raise SystemExit(f"No JSON-LD found under {JSONLD_DIR} for {args.today}")
+        raise SystemExit(f"No JSON-LD found under {jsonld_path} for {args.today}")
+    
+    print(f"Found {len(files)} JSON-LD files for {args.today}")
 
     pts = []
     for fp in files:
