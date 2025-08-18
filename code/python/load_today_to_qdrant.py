@@ -53,6 +53,16 @@ def main():
     q_key = os.getenv("QDRANT_API_KEY")
     oai = OpenAI()
     qd = QdrantClient(url=q_url, api_key=q_key, timeout=30.0)
+    
+    # ensure collection exists (size must match your embeddings)
+    emb_dim = int(os.getenv("EMBEDDING_DIM", "1536"))
+    try:
+        qd.get_collection(COLL)
+    except Exception:
+        qd.create_collection(
+            collection_name=COLL,
+            vectors_config=models.VectorParams(size=emb_dim, distance=models.Distance.COSINE),
+        )
 
     # 1) delete yesterday’s points
     y_tag = f"menus_{args.yesterday}"
