@@ -63,34 +63,35 @@ def main():
             collection_name=COLL,
             vectors_config=models.VectorParams(size=emb_dim, distance=models.Distance.COSINE),
         )
-    # ensure we can filter by sitetag (needed for deletes)
-    try:
-        qd.create_payload_index(
-            collection_name=COLL,
-            field_name="sitetag",
-            field_schema=models.PayloadSchemaType.KEYWORD,
-        )
-    except Exception:
-        # already exists or benign error – ignore
-        pass
+    # ensure filterable fields
+    for field, schema in (("sitetag", models.PayloadSchemaType.KEYWORD),
+                          ("site",    models.PayloadSchemaType.KEYWORD)):
+        try:
+            qd.create_payload_index(
+                collection_name=COLL,
+                field_name=field,
+                field_schema=schema,
+            )
+        except Exception:
+            pass  # already exists / non-fatal
 
-    # 1) delete yesterday’s points
-    y_tag = f"menus_{args.yesterday}"
-    try:
-        qd.delete(
-            collection_name=COLL,
-            points_selector=models.FilterSelector(
-                filter=models.Filter(must=[
-                    models.FieldCondition(
-                        key="sitetag",
-                        match=models.MatchValue(value=y_tag)
-                    )
-                ])
-            ),
-        )
-        print(f"deleted sitetag={y_tag}")
-    except Exception as e:
-        print(f"warn: delete yesterday failed: {e}")
+    # 1) delete today's and yesterday's points (idempotent)
+    for tag in (f"menus_{args.today}", f"menus_{args.yesterday}"):
+        try:
+            qd.delete(
+                collection_name=COLL,
+                points_selector=models.FilterSelector(
+                    filter=models.Filter(must=[
+                        models.FieldCondition(
+                            key="sitetag",
+                            match=models.MatchValue(value=tag)
+                        )
+                    ])
+                ),
+            )
+            print(f"deleted sitetag={tag}")
+        except Exception as e:
+            print(f"warn: delete {tag} failed: {e}")
 
     # 2) upsert today’s points
     t_tag = f"menus_{args.today}"
@@ -114,10 +115,26 @@ def main():
         if not text:
             continue
         emb = oai.embeddings.create(model=MODEL, input=text).data[0].embedding
+        
+        # Parse site and meal from filename
+        name = fp.name.rsplit(".", 1)[0]
+        parts = name.split("_")
+        site = parts[0] if len(parts) > 0 else None          # e.g., 'rhetas-market'
+        meal = parts[1] if len(parts) > 1 else None          # e.g., 'lunch'
+        
+        payload = {
+            "sitetag": t_tag,                # menus_YYYY-MM-DD (today)
+            "site": site,                    # <-- add this
+            "meal": meal,                    # optional but handy
+            "date": args.today,              # explicit date of this load
+            "source": str(fp),
+            "kind": "nutrislice",
+        }
+        
         pts.append(models.PointStruct(
             id=str(uuid.uuid4()),
             vector=emb,
-            payload={"sitetag": t_tag, "source": str(fp), "kind": "nutrislice"}
+            payload=payload
         ))
 
         if len(pts) >= 128:
