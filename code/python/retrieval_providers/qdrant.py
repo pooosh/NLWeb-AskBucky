@@ -723,7 +723,7 @@ class QdrantVectorClient:
                 logger.warning(f"Collection '{collection_name}' does not exist")
                 return []
             
-            # Use scroll to get all points with site field
+            # Use scroll to get all points with sitetag field
             sites = set()
             offset = None
             batch_size = 1000
@@ -733,17 +733,17 @@ class QdrantVectorClient:
                     collection_name=collection_name,
                     limit=batch_size,
                     offset=offset,
-                    with_payload=["site"]
+                    with_payload=["sitetag"]
                 )
                 
                 if not points:
                     break
                 
-                # Extract site values
+                # Extract sitetag values
                 for point in points:
-                    site = point.payload.get("site")
-                    if site:
-                        sites.add(site)
+                    sitetag = point.payload.get("sitetag")
+                    if sitetag:
+                        sites.add(sitetag)
                 
                 offset = next_offset
                 if offset is None:
