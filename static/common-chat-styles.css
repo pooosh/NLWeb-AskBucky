@@ -739,6 +739,9 @@ body {
     /* Ensure sidebar is closed by default on mobile */
     transform: translateX(-100%);
     transition: transform var(--transition);
+    /* Ensure proper flex layout on mobile */
+    display: flex;
+    flex-direction: column;
   }
 
   .sidebar.open {
@@ -761,11 +764,10 @@ body {
   }
   
   /* Hide mobile menu toggle when sidebar is open */
-  .sidebar.open ~ .mobile-menu-toggle,
-  .sidebar.open + .mobile-menu-toggle {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
+  .sidebar.open ~ .mobile-menu-toggle {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
   }
 
   .chat-header {
@@ -781,12 +783,16 @@ body {
   /* Ensure feedback chip is visible in sidebar on mobile */
   .sidebar .feedback-chip {
     display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
   
   /* Adjust sidebar footer for mobile */
   .sidebar-footer {
     margin-left: 16px;
     margin-bottom: 16px;
+    margin-top: auto; /* Push to bottom of sidebar */
+    padding: 16px;
   }
   
   /* Ensure feedback chip is properly sized on mobile */
@@ -794,6 +800,14 @@ body {
     min-width: 120px;
     font-size: 13px;
     padding: 6px 12px;
+    width: 100%; /* Take full width of footer */
+    justify-content: center;
+  }
+  
+  /* Ensure conversations list doesn't take all space */
+  .conversations-list {
+    flex: 1;
+    overflow-y: auto;
   }
 }
 
