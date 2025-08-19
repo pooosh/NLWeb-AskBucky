@@ -764,18 +764,12 @@ body {
     background-color: red !important; /* Debug: make it red to see if it's visible */
   }
   
-  /* Hide mobile menu toggle when sidebar is open */
-  .sidebar.open ~ .mobile-menu-toggle {
+  /* Hide mobile menu toggle when sidebar is open - using more specific selector */
+  .app-container .sidebar.open ~ .mobile-menu-toggle {
+    display: none !important;
     opacity: 0 !important;
     visibility: hidden !important;
     pointer-events: none !important;
-    display: none !important;
-    background-color: green !important; /* Debug: should never see this */
-  }
-  
-  /* Alternative approach: hide mobile menu toggle when sidebar is open */
-  body .sidebar.open ~ .mobile-menu-toggle {
-    display: none !important;
   }
 
   .chat-header {
@@ -799,26 +793,28 @@ body {
     border: 3px solid blue !important; /* Debug: add blue border */
   }
   
-  /* Adjust sidebar footer for mobile */
+  /* Move feedback chip to top of sidebar on mobile */
   .sidebar-footer {
     margin-left: 16px;
     margin-bottom: 16px;
-    margin-top: auto; /* Push to bottom of sidebar */
-    padding: 16px;
+    margin-top: 0; /* Move to top instead of bottom */
+    padding: 8px 16px; /* Reduce padding */
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
     background-color: orange !important; /* Debug: make footer orange */
     border: 2px solid purple !important; /* Debug: add purple border */
+    order: -1; /* Move to top in flex layout */
   }
   
   /* Ensure feedback chip is properly sized on mobile */
   .sidebar .feedback-chip {
-    min-width: 120px;
-    font-size: 13px;
-    padding: 6px 12px;
+    min-width: 100px;
+    font-size: 12px;
+    padding: 4px 8px;
     width: 100%; /* Take full width of footer */
     justify-content: center;
+    height: 32px; /* Fixed height for consistency */
   }
   
   /* Ensure conversations list doesn't take all space */
