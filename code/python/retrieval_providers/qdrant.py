@@ -105,6 +105,16 @@ class QdrantVectorClient:
         logger.debug(f"Resolved path: {resolved_path}")
         return resolved_path
     
+    def _normalize_qdrant_url(self, u: Optional[str]) -> Optional[str]:
+        """Normalize Qdrant URL by adding :6333 if no port is specified."""
+        if not u:
+            return u
+        if u.startswith("http://") or u.startswith("https://"):
+            host = u.split("://", 1)[1]
+            if ":" not in host:
+                return u.rstrip("/") + ":6333"
+        return u
+
     def _create_client_params(self):
         """Extract client parameters from endpoint config."""
         params = {}
@@ -114,6 +124,11 @@ class QdrantVectorClient:
         url = self.api_endpoint
         api_key = self.api_key
         path = self.database_path
+
+        # Normalize URL if present
+        if url:
+            url = self._normalize_qdrant_url(url)
+            logger.debug(f"Normalized Qdrant URL: {url}")
 
         # Decide whether to use URL or path-based connection
         if url and url.startswith(("http://", "https://")):
