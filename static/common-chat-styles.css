@@ -768,6 +768,7 @@ body {
     opacity: 0 !important;
     visibility: hidden !important;
     pointer-events: none !important;
+    display: none !important;
   }
 
   .chat-header {
@@ -785,6 +786,8 @@ body {
     display: inline-flex !important;
     visibility: visible !important;
     opacity: 1 !important;
+    position: relative !important;
+    z-index: 1000 !important;
   }
   
   /* Adjust sidebar footer for mobile */
@@ -793,6 +796,9 @@ body {
     margin-bottom: 16px;
     margin-top: auto; /* Push to bottom of sidebar */
     padding: 16px;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
   
   /* Ensure feedback chip is properly sized on mobile */

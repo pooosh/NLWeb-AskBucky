@@ -146,7 +146,7 @@ class ModernChatInterface {
     
     // Mobile menu toggle
     this.elements.mobileMenuToggle.addEventListener('click', () => {
-      this.elements.sidebar.classList.add('open');
+      this.elements.sidebar.classList.toggle('open');
     });
     
     // Click outside sidebar to close it on mobile
@@ -189,7 +189,14 @@ class ModernChatInterface {
     });
     
     // New chat button
-    this.elements.newChatBtn.addEventListener('click', () => this.createNewChat());
+    this.elements.newChatBtn.addEventListener('click', () => {
+      this.createNewChat();
+      // Close sidebar on mobile when new chat is created
+      const isMobile = window.innerWidth <= 768;
+      if (isMobile) {
+        this.elements.sidebar.classList.remove('open');
+      }
+    });
     
     
     // Send button
