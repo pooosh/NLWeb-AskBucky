@@ -761,7 +761,6 @@ body {
   .mobile-menu-toggle {
     display: flex; /* Show mobile menu toggle */
     transition: opacity var(--transition), visibility var(--transition);
-    background-color: red !important; /* Debug: make it red to see if it's visible */
   }
   
   /* Hide mobile menu toggle when sidebar is open - simple approach */
@@ -786,21 +785,17 @@ body {
     opacity: 1 !important;
     position: relative !important;
     z-index: 1000 !important;
-    background-color: yellow !important; /* Debug: make it yellow to see if it's visible */
-    border: 3px solid blue !important; /* Debug: add blue border */
   }
   
   /* Position feedback chip at bottom but ensure it's visible on mobile */
   .sidebar-footer {
-    margin-left: 16px;
+    margin-left: 8px; /* Reduced from 16px to center it better */
     margin-bottom: 16px;
     margin-top: auto; /* Push to bottom of sidebar */
     padding: 8px 16px; /* Reduce padding */
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
-    background-color: orange !important; /* Debug: make footer orange */
-    border: 2px solid purple !important; /* Debug: add purple border */
     position: sticky; /* Keep it visible */
     bottom: 0; /* Stick to bottom */
   }
