@@ -86,11 +86,18 @@ class ModernChatInterface {
     this.loadRememberedItems();
     this.updateRememberedItemsList();
     
-    // Restore sidebar state
-    const isCollapsed = localStorage.getItem('nlweb-sidebar-collapsed') === 'true';
-    if (isCollapsed) {
-      this.elements.sidebar.classList.add('collapsed');
-      this.elements.sidebarToggle.classList.add('sidebar-collapsed');
+    // Restore sidebar state - only on desktop
+    const isMobile = window.innerWidth <= 768;
+    if (!isMobile) {
+      const isCollapsed = localStorage.getItem('nlweb-sidebar-collapsed') === 'true';
+      if (isCollapsed) {
+        this.elements.sidebar.classList.add('collapsed');
+        this.elements.sidebarToggle.classList.add('sidebar-collapsed');
+      }
+    } else {
+      // On mobile, ensure sidebar is closed by default
+      this.elements.sidebar.classList.remove('open');
+      this.elements.sidebar.classList.remove('collapsed');
     }
     
     // Bind events
@@ -112,6 +119,16 @@ class ModernChatInterface {
         // User logged out, clear server conversations and keep only local ones
         this.conversationManager.loadLocalConversations(this.selectedSite);
         this.updateConversationsList();
+      }
+    });
+    
+    // Handle window resize for mobile/desktop transitions
+    window.addEventListener('resize', () => {
+      const isMobile = window.innerWidth <= 768;
+      if (isMobile) {
+        // On mobile, ensure sidebar is closed
+        this.elements.sidebar.classList.remove('open');
+        this.elements.sidebar.classList.remove('collapsed');
       }
     });
   }
@@ -205,6 +222,8 @@ class ModernChatInterface {
         window.open(feedbackUrl, '_blank', 'noopener,noreferrer');
       });
     }
+    
+
   }
   
   createNewChat(existingInputElementId = null, site = null) {

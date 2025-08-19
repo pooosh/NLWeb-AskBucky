@@ -162,7 +162,7 @@ body {
 
 /* Sidebar Footer Styles */
 .sidebar-footer {
-  margin-left: 50px;
+  margin-left: 40px;
   margin-bottom: 16px;
 }
 
@@ -736,25 +736,39 @@ body {
     z-index: 999;
     height: 100vh;
     box-shadow: var(--shadow-md);
+    /* Ensure sidebar is closed by default on mobile */
+    transform: translateX(-100%);
+    transition: transform var(--transition);
   }
 
   .sidebar.open {
     left: 0;
+    transform: translateX(0);
   }
   
   .sidebar.collapsed {
     left: -var(--sidebar-width);
+    transform: translateX(-100%);
   }
   
   .sidebar-toggle {
-    display: flex;
+    display: none; /* Hide desktop toggle on mobile */
   }
 
   .mobile-menu-toggle {
-    display: none;
+    display: flex; /* Show mobile menu toggle */
   }
 
   .chat-header {
-    padding-left: 60px;
+    padding-left: 16px; /* Reduce padding since sidebar is hidden */
   }
+  
+  /* Ensure main content takes full width on mobile */
+  .main-content {
+    width: 100%;
+    margin-left: 0;
+  }
+  
+
 }
+
