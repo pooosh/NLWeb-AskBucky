@@ -25,8 +25,7 @@ def _normalize_qdrant_url(u: Optional[str]) -> Optional[str]:
         return u
     if u.startswith("http://") or u.startswith("https://"):
         host = u.split("://", 1)[1]
-        # Don't append :6333 to HTTPS URLs (cloud instances) or URLs that already have a port
-        if ":" not in host and u.startswith("http://"):
+        if ":" not in host:
             return u.rstrip("/") + ":6333"
     return u
 
