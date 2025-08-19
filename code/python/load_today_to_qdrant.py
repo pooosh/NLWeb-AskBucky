@@ -62,6 +62,7 @@ def main():
         qd.create_collection(
             collection_name=COLL,
             vectors_config=models.VectorParams(size=emb_dim, distance=models.Distance.COSINE),
+            optimizers_config=models.OptimizersConfigDiff(indexing_threshold=1),  # Force immediate indexing
         )
     # ensure filterable fields
     for field, schema in (("sitetag", models.PayloadSchemaType.KEYWORD),
@@ -74,6 +75,16 @@ def main():
             )
         except Exception:
             pass  # already exists / non-fatal
+    
+    # Force indexing for existing collections
+    try:
+        qd.update_collection(
+            collection_name=COLL,
+            optimizers_config=models.OptimizersConfigDiff(indexing_threshold=1)
+        )
+        print(f"Updated collection {COLL} to force immediate indexing")
+    except Exception as e:
+        print(f"Warning: Could not update collection indexing threshold: {e}")
 
     # 1) delete today's and yesterday's points (idempotent)
     for tag in (f"menus_{args.today}", f"menus_{args.yesterday}"):
@@ -132,9 +143,22 @@ def main():
         site = parts[0] if len(parts) > 0 else None          # e.g., 'rhetas-market'
         meal = parts[1] if len(parts) > 1 else None          # e.g., 'lunch'
         
+        # Extract name from the data
+        item_name = ""
+        if isinstance(data, dict):
+            if "name" in data:
+                item_name = data["name"]
+            elif "title" in data:
+                item_name = data["title"]
+            elif "description" in data:
+                item_name = data["description"][:100]  # Truncate long descriptions
+        
         payload = {
             "sitetag": t_tag,                # menus_YYYY-MM-DD (today)
-            "site": site,                    # <-- add this
+            "site": site,                    # Site name
+            "name": item_name,               # Item name for search results
+            "schema_json": json.dumps(data), # Full schema data for search results
+            "url": f"file://{fp}",           # URL for search results
             "meal": meal,                    # optional but handy
             "date": args.today,              # explicit date of this load
             "source": str(fp),
