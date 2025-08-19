@@ -423,7 +423,8 @@ class VectorDBClient:
             if config.database_path:
                 return True  # Local file-based storage
             else:
-                return bool(config.api_endpoint)  # Remote server (api_key is optional)
+                # For remote Qdrant (Cloud), need both endpoint and API key
+                return bool(config.api_endpoint and config.api_key)
         elif db_type == "elasticsearch":
             # Elasticsearch requires endpoint, API key is optional
             return bool(config.api_endpoint)
