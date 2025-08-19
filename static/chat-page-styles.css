@@ -345,7 +345,7 @@ h1, h2, h3, h4, h5, h6 {
   padding: 8px 12px;
   font-weight: 600;
   font-size: 13px;
-  color: var(--text-secondary);
+  color: var(--text-primary);
   border-bottom: 1px solid var(--border-color);
   margin-bottom: 4px;
 }
@@ -356,6 +356,7 @@ h1, h2, h3, h4, h5, h6 {
   cursor: pointer;
   transition: var(--transition);
   font-size: 14px;
+  color: var(--text-primary);
 }
 
 .mode-dropdown-item:hover {
