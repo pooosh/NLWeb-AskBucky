@@ -40,6 +40,32 @@ def extract_text(obj) -> str:
         return obj
     return ""
 
+def ensure_indexes(client: QdrantClient, coll: str):
+    # Idempotent: avoid "index required" errors on filters
+    for field in ("sitetag", "doc_id"):
+        try:
+            client.create_payload_index(
+                coll,
+                field_name=field,
+                field_schema=models.PayloadSchemaType.KEYWORD
+            )
+        except Exception:
+            pass  # already exists or server ignores
+
+def file_doc_id(path: str) -> str:
+    return Path(path).stem  # e.g., 'gordon-avenue-market_lunch_1849_2025-08-23'
+
+def exists_today_for_doc(client: QdrantClient, coll: str, sitetag: str, doc_id: str) -> bool:
+    resp = client.count(
+        collection_name=coll,
+        count_filter=models.Filter(must=[
+            models.FieldCondition(key="sitetag", match=models.MatchValue(value=sitetag)),
+            models.FieldCondition(key="doc_id",  match=models.MatchValue(value=doc_id)),
+        ]),
+        exact=True
+    )
+    return getattr(resp, "count", 0) > 0
+
 def main():
     # Validate environment variables first
     validate_env()
@@ -53,6 +79,8 @@ def main():
     q_key = os.getenv("QDRANT_API_KEY")
     oai = OpenAI()
     qd = QdrantClient(url=q_url, api_key=q_key, timeout=30.0)
+    coll = os.getenv("QDRANT_COLLECTION", "askbucky")
+    ensure_indexes(qd, coll)
     
     # ensure collection exists (size must match your embeddings)
     emb_dim = int(os.getenv("EMBEDDING_DIM", "1536"))
@@ -86,23 +114,23 @@ def main():
     except Exception as e:
         print(f"Warning: Could not update collection indexing threshold: {e}")
 
-    # 1) delete today's and yesterday's points (idempotent)
-    for tag in (f"menus_{args.today}", f"menus_{args.yesterday}"):
-        try:
-            qd.delete(
-                collection_name=COLL,
-                points_selector=models.FilterSelector(
-                    filter=models.Filter(must=[
-                        models.FieldCondition(
-                            key="sitetag",
-                            match=models.MatchValue(value=tag)
-                        )
-                    ])
-                ),
-            )
-            print(f"deleted sitetag={tag}")
-        except Exception as e:
-            print(f"warn: delete {tag} failed: {e}")
+    # 1) delete only yesterday's points (keep today's for incremental updates)
+    yesterday_tag = f"menus_{args.yesterday}"
+    try:
+        qd.delete(
+            collection_name=COLL,
+            points_selector=models.FilterSelector(
+                filter=models.Filter(must=[
+                    models.FieldCondition(
+                        key="sitetag",
+                        match=models.MatchValue(value=yesterday_tag)
+                    )
+                ])
+            ),
+        )
+        print(f"deleted sitetag={yesterday_tag}")
+    except Exception as e:
+        print(f"warn: delete {yesterday_tag} failed: {e}")
 
     # 2) upsert today’s points
     t_tag = f"menus_{args.today}"
@@ -118,6 +146,12 @@ def main():
 
     pts = []
     for fp in files:
+        # Check if this file already exists for today
+        doc_id = file_doc_id(str(fp))
+        if exists_today_for_doc(qd, coll, t_tag, doc_id):
+            print(f"skip_existing: {doc_id} already embedded for {t_tag}")
+            continue
+            
         try:
             data = json.loads(fp.read_text())
         except Exception:
@@ -163,6 +197,7 @@ def main():
             "date": args.today,              # explicit date of this load
             "source": str(fp),
             "kind": "nutrislice",
+            "doc_id": doc_id,                # File identifier for future skips
         }
         
         pts.append(models.PointStruct(
