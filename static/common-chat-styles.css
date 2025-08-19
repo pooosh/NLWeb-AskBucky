@@ -757,6 +757,15 @@ body {
 
   .mobile-menu-toggle {
     display: flex; /* Show mobile menu toggle */
+    transition: opacity var(--transition), visibility var(--transition);
+  }
+  
+  /* Hide mobile menu toggle when sidebar is open */
+  .sidebar.open ~ .mobile-menu-toggle,
+  .sidebar.open + .mobile-menu-toggle {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
   }
 
   .chat-header {
@@ -769,6 +778,22 @@ body {
     margin-left: 0;
   }
   
-
+  /* Ensure feedback chip is visible in sidebar on mobile */
+  .sidebar .feedback-chip {
+    display: inline-flex !important;
+  }
+  
+  /* Adjust sidebar footer for mobile */
+  .sidebar-footer {
+    margin-left: 16px;
+    margin-bottom: 16px;
+  }
+  
+  /* Ensure feedback chip is properly sized on mobile */
+  .sidebar .feedback-chip {
+    min-width: 120px;
+    font-size: 13px;
+    padding: 6px 12px;
+  }
 }
 

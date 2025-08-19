@@ -146,7 +146,46 @@ class ModernChatInterface {
     
     // Mobile menu toggle
     this.elements.mobileMenuToggle.addEventListener('click', () => {
-      this.elements.sidebar.classList.toggle('open');
+      this.elements.sidebar.classList.add('open');
+    });
+    
+    // Click outside sidebar to close it on mobile
+    document.addEventListener('click', (e) => {
+      const isMobile = window.innerWidth <= 768;
+      if (isMobile && this.elements.sidebar.classList.contains('open')) {
+        // Check if click is outside the sidebar and not on the mobile menu toggle
+        if (!this.elements.sidebar.contains(e.target) && 
+            !this.elements.mobileMenuToggle.contains(e.target)) {
+          this.elements.sidebar.classList.remove('open');
+        }
+      }
+    });
+    
+    // Touch event handling for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    document.addEventListener('touchstart', (e) => {
+      const isMobile = window.innerWidth <= 768;
+      if (isMobile && this.elements.sidebar.classList.contains('open')) {
+        // Check if touch is outside the sidebar and not on the mobile menu toggle
+        if (!this.elements.sidebar.contains(e.target) && 
+            !this.elements.mobileMenuToggle.contains(e.target)) {
+          this.elements.sidebar.classList.remove('open');
+        }
+      }
+      touchStartX = e.changedTouches[0].screenX;
+    });
+    
+    document.addEventListener('touchend', (e) => {
+      const isMobile = window.innerWidth <= 768;
+      if (isMobile && this.elements.sidebar.classList.contains('open')) {
+        touchEndX = e.changedTouches[0].screenX;
+        // Swipe left to close sidebar
+        if (touchStartX - touchEndX > 50) {
+          this.elements.sidebar.classList.remove('open');
+        }
+      }
     });
     
     // New chat button
