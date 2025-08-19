@@ -1,4 +1,4 @@
-# NLWeb/code/python/load_today_to_qdrant.py
+# NLWeb/code/python/load_today_to_qdrant.py - Updated with incremental loading
 import os, argparse, json, uuid, sys
 from pathlib import Path
 from typing import Iterable
