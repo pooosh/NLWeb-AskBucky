@@ -764,12 +764,9 @@ body {
     background-color: red !important; /* Debug: make it red to see if it's visible */
   }
   
-  /* Hide mobile menu toggle when sidebar is open - using more specific selector */
-  .app-container .sidebar.open ~ .mobile-menu-toggle {
+  /* Hide mobile menu toggle when sidebar is open - simple approach */
+  .mobile-menu-toggle.hidden {
     display: none !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
   }
 
   .chat-header {
@@ -793,18 +790,19 @@ body {
     border: 3px solid blue !important; /* Debug: add blue border */
   }
   
-  /* Move feedback chip to top of sidebar on mobile */
+  /* Position feedback chip at bottom but ensure it's visible on mobile */
   .sidebar-footer {
     margin-left: 16px;
     margin-bottom: 16px;
-    margin-top: 0; /* Move to top instead of bottom */
+    margin-top: auto; /* Push to bottom of sidebar */
     padding: 8px 16px; /* Reduce padding */
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
     background-color: orange !important; /* Debug: make footer orange */
     border: 2px solid purple !important; /* Debug: add purple border */
-    order: -1; /* Move to top in flex layout */
+    position: sticky; /* Keep it visible */
+    bottom: 0; /* Stick to bottom */
   }
   
   /* Ensure feedback chip is properly sized on mobile */

@@ -147,6 +147,12 @@ class ModernChatInterface {
     // Mobile menu toggle
     this.elements.mobileMenuToggle.addEventListener('click', () => {
       this.elements.sidebar.classList.toggle('open');
+      // Hide/show mobile menu toggle based on sidebar state
+      if (this.elements.sidebar.classList.contains('open')) {
+        this.elements.mobileMenuToggle.classList.add('hidden');
+      } else {
+        this.elements.mobileMenuToggle.classList.remove('hidden');
+      }
     });
     
     // Click outside sidebar to close it on mobile
@@ -157,6 +163,7 @@ class ModernChatInterface {
         if (!this.elements.sidebar.contains(e.target) && 
             !this.elements.mobileMenuToggle.contains(e.target)) {
           this.elements.sidebar.classList.remove('open');
+          this.elements.mobileMenuToggle.classList.remove('hidden');
         }
       }
     });
@@ -172,6 +179,7 @@ class ModernChatInterface {
         if (!this.elements.sidebar.contains(e.target) && 
             !this.elements.mobileMenuToggle.contains(e.target)) {
           this.elements.sidebar.classList.remove('open');
+          this.elements.mobileMenuToggle.classList.remove('hidden');
         }
       }
       touchStartX = e.changedTouches[0].screenX;
@@ -184,6 +192,7 @@ class ModernChatInterface {
         // Swipe left to close sidebar
         if (touchStartX - touchEndX > 50) {
           this.elements.sidebar.classList.remove('open');
+          this.elements.mobileMenuToggle.classList.remove('hidden');
         }
       }
     });
@@ -195,6 +204,7 @@ class ModernChatInterface {
       const isMobile = window.innerWidth <= 768;
       if (isMobile) {
         this.elements.sidebar.classList.remove('open');
+        this.elements.mobileMenuToggle.classList.remove('hidden');
       }
     });
     
