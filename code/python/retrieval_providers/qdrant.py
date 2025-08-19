@@ -87,16 +87,18 @@ class QdrantVectorClient:
             
         # Get the directory where this file is located
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        # Go up to the project root directory (assuming this file is in a subdirectory)
-        project_root = os.path.dirname(current_dir)
+        # Go up to the NLWeb root directory (retrieval_providers -> python -> code -> NLWeb)
+        nlweb_root = os.path.dirname(os.path.dirname(os.path.dirname(current_dir)))
         
         # Handle different relative path formats
         if path.startswith('./'):
-            resolved_path = os.path.join(project_root, path[2:])
+            resolved_path = os.path.join(nlweb_root, path[2:])
         elif path.startswith('../'):
-            resolved_path = os.path.join(os.path.dirname(project_root), path[3:])
+            # Remove the ../ prefix and resolve relative to NLWeb root
+            relative_path = path[3:]
+            resolved_path = os.path.join(nlweb_root, relative_path)
         else:
-            resolved_path = os.path.join(project_root, path)
+            resolved_path = os.path.join(nlweb_root, path)
         
         # Ensure directory exists
         directory = os.path.dirname(resolved_path)
@@ -143,7 +145,7 @@ class QdrantVectorClient:
             params["path"] = resolved_path
         else:
             # Default to a local path if neither URL nor path is specified
-            default_path = self._resolve_path("../data/db")
+            default_path = self._resolve_path("data/db")
             logger.debug(f"Using default local Qdrant database path: {default_path}")
             params["path"] = default_path
         
