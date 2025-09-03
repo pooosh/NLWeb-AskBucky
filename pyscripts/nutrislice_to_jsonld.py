@@ -65,6 +65,11 @@ def transform_menu(raw_json: dict, hall_slug: str, meal_type: str) -> List[Tuple
     for day in raw_json.get("days", []):
         menu_date: str = day.get("date") or "unknown-date"
         sections_info: dict = day.get("menu_info", {})
+        
+        # Validate sections_info structure
+        if not isinstance(sections_info, dict):
+            print(f"Warning: sections_info is not a dict for {hall_slug} {meal_type} {menu_date}: {type(sections_info)}")
+            continue
 
         # bucket items by menu/section id
         items_by_section: dict[str, list] = {}
@@ -74,6 +79,10 @@ def transform_menu(raw_json: dict, hall_slug: str, meal_type: str) -> List[Tuple
             items_by_section.setdefault(str(itm.get("menu_id")), []).append(itm)
 
         for menu_id, meta in sections_info.items():
+            # Skip if meta is None or doesn't have the expected structure
+            if not meta or not isinstance(meta, dict):
+                print(f"Warning: Invalid meta for menu_id {menu_id} in {hall_slug} {meal_type} {menu_date}: {meta}")
+                continue
             section_name = meta.get("section_options", {}).get("display_name")
             if not section_name:
                 continue
@@ -181,16 +190,20 @@ def main():
     sunday_iso = last_sunday(date.today()).isoformat()
         # search recursively because weekly dumps live in dated sub‑folders
     for raw_file in RAW_DIR.rglob(f"*_{sunday_iso}.json"):
-        parts = raw_file.stem.split("_")  # <hall>_<meal>_<YYYY-MM-DD>
-        if len(parts) < 3:
-            continue
-        hall_slug, meal_type = parts[0], parts[1]
+        try:
+            parts = raw_file.stem.split("_")  # <hall>_<meal>_<YYYY-MM-DD>
+            if len(parts) < 3:
+                continue
+            hall_slug, meal_type = parts[0], parts[1]
 
-        raw = json.loads(raw_file.read_text(encoding="utf-8"))
-        for menu_obj, fname in transform_menu(raw, hall_slug, meal_type):
-            out_path = JSONLD_DIR / fname
-            out_path.write_text(json.dumps(menu_obj, ensure_ascii=False, indent=2), encoding="utf-8")
-            print("Wrote", out_path)
+            raw = json.loads(raw_file.read_text(encoding="utf-8"))
+            for menu_obj, fname in transform_menu(raw, hall_slug, meal_type):
+                out_path = JSONLD_DIR / fname
+                out_path.write_text(json.dumps(menu_obj, ensure_ascii=False, indent=2), encoding="utf-8")
+                print("Wrote", out_path)
+        except Exception as e:
+            print(f"Error processing {raw_file}: {e}")
+            continue
 
 
 if __name__ == "__main__":
