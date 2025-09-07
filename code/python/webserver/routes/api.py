@@ -11,7 +11,7 @@ from methods.generate_answer import GenerateAnswer
 from webserver.aiohttp_streaming_wrapper import AioHttpStreamingWrapper
 from core.retriever import get_vector_db_client
 from core.utils.utils import get_param
-import analytics
+# TEMPORARILY DISABLED: import analytics
 
 logger = logging.getLogger(__name__)
 
@@ -86,7 +86,7 @@ async def handle_streaming_ask(request: web.Request, query_params: Dict[str, Any
     query = get_param(query_params, "query", str, "")
     site = get_param(query_params, "site", str, "all")
     sitetag = get_param(query_params, "sitetag", str, None)
-    analytics.log_ask_started(request, response, query, site, sitetag)
+    # TEMPORARILY DISABLED: analytics.log_ask_started(request, response, query, site, sitetag)
     
     # Create aiohttp-compatible wrapper
     wrapper = AioHttpStreamingWrapper(request, response, query_params)
@@ -110,7 +110,7 @@ async def handle_streaming_ask(request: web.Request, query_params: Dict[str, Any
         
         # Log successful ask answered event
         latency_ms = int((time.time() - start_time) * 1000)
-        analytics.log_ask_answered(
+        # TEMPORARILY DISABLED: analytics.log_ask_answered(
             request, response, query, "success", 0, latency_ms, 
             site, sitetag, os.getenv("GEN_MODEL", "gpt-4o-mini")
         )
@@ -121,7 +121,7 @@ async def handle_streaming_ask(request: web.Request, query_params: Dict[str, Any
         
         # Log error event
         latency_ms = int((time.time() - start_time) * 1000)
-        analytics.log_ask_answered(
+        # TEMPORARILY DISABLED: analytics.log_ask_answered(
             request, response, query, "error", 0, latency_ms,
             site, sitetag, os.getenv("GEN_MODEL", "gpt-4o-mini"), 
             error_message=str(e)
@@ -142,7 +142,7 @@ async def handle_regular_ask(request: web.Request, query_params: Dict[str, Any],
     try:
         # Log ask started event
         response = web.json_response({})  # Temporary response for analytics
-        analytics.log_ask_started(request, response, query, site, sitetag)
+        # TEMPORARILY DISABLED: analytics.log_ask_started(request, response, query, site, sitetag)
         
         # Determine which handler to use
         generate_mode = query_params.get('generate_mode', 'none')
@@ -175,7 +175,7 @@ async def handle_regular_ask(request: web.Request, query_params: Dict[str, Any],
         final_response = web.json_response(result)
         
         # Log ask answered event
-        analytics.log_ask_answered(
+        # TEMPORARILY DISABLED: analytics.log_ask_answered(
             request, final_response, query, status, sources_count, latency_ms,
             site, sitetag, os.getenv("GEN_MODEL", "gpt-4o-mini")
         )
@@ -195,7 +195,7 @@ async def handle_regular_ask(request: web.Request, query_params: Dict[str, Any],
         }, status=500)
         
         # Log error event
-        analytics.log_ask_answered(
+        # TEMPORARILY DISABLED: analytics.log_ask_answered(
             request, error_response, query, "error", 0, latency_ms,
             site, sitetag, os.getenv("GEN_MODEL", "gpt-4o-mini"),
             error_message=str(e)
@@ -264,7 +264,7 @@ async def sites_handler(request: web.Request) -> web.Response:
             
             # Log page view for sites endpoint
             sitetag = request.query.get('sitetag')
-            analytics.log_page_view(request, response, path="/sites", sitetag=sitetag)
+            # TEMPORARILY DISABLED: analytics.log_page_view(request, response, path="/sites", sitetag=sitetag)
             
             return response
         else:
@@ -273,7 +273,7 @@ async def sites_handler(request: web.Request) -> web.Response:
             
             # Log page view for sites endpoint
             sitetag = request.query.get('sitetag')
-            analytics.log_page_view(request, response, path="/sites", sitetag=sitetag)
+            # TEMPORARILY DISABLED: analytics.log_page_view(request, response, path="/sites", sitetag=sitetag)
             
             return response
             
@@ -286,7 +286,7 @@ async def sites_handler(request: web.Request) -> web.Response:
         error_response = web.json_response(error_data, status=500)
         
         # Log error
-        analytics.log_error(request, error_response, "api", str(e), site="all")
+        # TEMPORARILY DISABLED: analytics.log_error(request, error_response, "api", str(e), site="all")
         
         return error_response
 

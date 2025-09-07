@@ -342,7 +342,7 @@ class NLWebHandler:
                     pass
                 else:
                     # For non-streaming requests, log here
-                    analytics.log_ask_answered(
+                    # TEMPORARILY DISABLED: analytics.log_ask_answered(
                         None, None, self.query, final_status, sources_count, 0,
                         self.site, None, self.model, len(self.final_retrieved_items) if self.final_retrieved_items else 0
                     )
@@ -451,7 +451,7 @@ class NLWebHandler:
                 
                 # Log Qdrant metrics
                 try:
-                    analytics.log_qdrant_metrics(
+                    # TEMPORARILY DISABLED: analytics.log_qdrant_metrics(
                         hits_count=len(items),
                         total_points=0,  # Will be updated if we can get collection info
                         search_time_ms=search_time_ms,

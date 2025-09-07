@@ -94,12 +94,12 @@ class RobustMenuLoader:
         else:
             status = "failed"
         
-        analytics.log_daily_job_status(
-            job_name="data_load",
-            status=status,
-            duration_ms=duration_ms,
-            records_processed=records_processed
-        )
+        # TEMPORARILY DISABLED: analytics.log_daily_job_status(
+        #     job_name="data_load",
+        #     status=status,
+        #     duration_ms=duration_ms,
+        #     records_processed=records_processed
+        # )
     
     def generate_report(self):
         """Generate a summary report"""
