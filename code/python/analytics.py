@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-FIXED Analytics module for AskBucky - Privacy-friendly product analytics
+CORRECTED Analytics module for AskBucky - Privacy-friendly product analytics
 
-This is a corrected version that handles response types properly.
+This version uses the proper aiohttp middleware pattern.
 """
 
 import os
@@ -208,10 +208,13 @@ def log_page_view(request: web.Request, response,
         logger.error(f"Failed to log page view: {e}")
 
 
-# FIXED Analytics middleware for automatic tracking
+# CORRECTED Analytics middleware using proper aiohttp pattern
+@web.middleware
 async def analytics_middleware(request: web.Request, handler):
     """
-    FIXED Middleware to automatically track page views and set up analytics
+    CORRECTED Analytics middleware for automatic tracking
+    
+    Uses the proper aiohttp middleware pattern with @web.middleware decorator.
     
     Args:
         request: The aiohttp request object
