@@ -111,9 +111,9 @@ async def handle_streaming_ask(request: web.Request, query_params: Dict[str, Any
         # Log successful ask answered event
         latency_ms = int((time.time() - start_time) * 1000)
         # TEMPORARILY DISABLED: analytics.log_ask_answered(
-            request, response, query, "success", 0, latency_ms, 
-            site, sitetag, os.getenv("GEN_MODEL", "gpt-4o-mini")
-        )
+        #     request, response, query, "success", 0, latency_ms, 
+        #     site, sitetag, os.getenv("GEN_MODEL", "gpt-4o-mini")
+        # )
         
     except Exception as e:
         logger.error(f"Error in streaming ask handler: {e}", exc_info=True)
@@ -122,10 +122,10 @@ async def handle_streaming_ask(request: web.Request, query_params: Dict[str, Any
         # Log error event
         latency_ms = int((time.time() - start_time) * 1000)
         # TEMPORARILY DISABLED: analytics.log_ask_answered(
-            request, response, query, "error", 0, latency_ms,
-            site, sitetag, os.getenv("GEN_MODEL", "gpt-4o-mini"), 
-            error_message=str(e)
-        )
+        #     request, response, query, "error", 0, latency_ms,
+        #     site, sitetag, os.getenv("GEN_MODEL", "gpt-4o-mini"), 
+        #     error_message=str(e)
+        # )
     finally:
         await wrapper.finish_response()
     
@@ -176,9 +176,9 @@ async def handle_regular_ask(request: web.Request, query_params: Dict[str, Any],
         
         # Log ask answered event
         # TEMPORARILY DISABLED: analytics.log_ask_answered(
-            request, final_response, query, status, sources_count, latency_ms,
-            site, sitetag, os.getenv("GEN_MODEL", "gpt-4o-mini")
-        )
+        #     request, final_response, query, status, sources_count, latency_ms,
+        #     site, sitetag, os.getenv("GEN_MODEL", "gpt-4o-mini")
+        # )
         
         return final_response
         
@@ -196,10 +196,10 @@ async def handle_regular_ask(request: web.Request, query_params: Dict[str, Any],
         
         # Log error event
         # TEMPORARILY DISABLED: analytics.log_ask_answered(
-            request, error_response, query, "error", 0, latency_ms,
-            site, sitetag, os.getenv("GEN_MODEL", "gpt-4o-mini"),
-            error_message=str(e)
-        )
+        #     request, error_response, query, "error", 0, latency_ms,
+        #     site, sitetag, os.getenv("GEN_MODEL", "gpt-4o-mini"),
+        #     error_message=str(e)
+        # )
         
         return error_response
 

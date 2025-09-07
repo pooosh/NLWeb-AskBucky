@@ -343,9 +343,10 @@ class NLWebHandler:
                 else:
                     # For non-streaming requests, log here
                     # TEMPORARILY DISABLED: analytics.log_ask_answered(
-                        None, None, self.query, final_status, sources_count, 0,
-                        self.site, None, self.model, len(self.final_retrieved_items) if self.final_retrieved_items else 0
-                    )
+                    #     None, None, self.query, final_status, sources_count, 0,
+                    #     self.site, None, self.model, len(self.final_retrieved_items) if self.final_retrieved_items else 0
+                    # )
+                    pass
             except Exception as e:
                 logger.error(f"Failed to log final analytics: {e}")
             
@@ -452,11 +453,12 @@ class NLWebHandler:
                 # Log Qdrant metrics
                 try:
                     # TEMPORARILY DISABLED: analytics.log_qdrant_metrics(
-                        hits_count=len(items),
-                        total_points=0,  # Will be updated if we can get collection info
-                        search_time_ms=search_time_ms,
-                        collection_name=str(self.site)
-                    )
+                    #     hits_count=len(items),
+                    #     total_points=0,  # Will be updated if we can get collection info
+                    #     search_time_ms=search_time_ms,
+                    #     collection_name=str(self.site)
+                    # )
+                    pass
                 except Exception as e:
                     logger.error(f"Failed to log Qdrant metrics: {e}")
                 
