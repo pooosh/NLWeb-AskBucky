@@ -12,12 +12,12 @@ def setup_middleware(app):
     """Setup all middleware in the correct order"""
     # Note: Middleware is applied in reverse order
     # So the first in this list is the outermost (executes first)
-    app.middlewares.append(error_middleware)
-    app.middlewares.append(logging_middleware)
-    app.middlewares.append(cors_middleware)
-    app.middlewares.append(auth_middleware)
-    app.middlewares.append(streaming_middleware)
     app.middlewares.append(analytics.analytics_middleware)
+    app.middlewares.append(streaming_middleware)
+    app.middlewares.append(auth_middleware)
+    app.middlewares.append(cors_middleware)
+    app.middlewares.append(logging_middleware)
+    app.middlewares.append(error_middleware)
 
 
 __all__ = [
