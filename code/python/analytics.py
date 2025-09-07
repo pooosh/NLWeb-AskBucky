@@ -400,7 +400,9 @@ async def analytics_middleware(request: web.Request, handler):
     except Exception as e:
         # Log errors
         response = web.json_response({"error": str(e)}, status=500)
-        log_error(request, response, "middleware", str(e))
+        # Create a StreamResponse for logging
+        stream_response = web.StreamResponse()
+        log_error(request, stream_response, "middleware", str(e))
         return response
     finally:
         # Log request timing
