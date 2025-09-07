@@ -5,6 +5,7 @@ import os
 import time
 import json
 from pathlib import Path
+import analytics
 
 class RobustMenuLoader:
     def __init__(self, date="2025-08-05"):
@@ -58,6 +59,7 @@ class RobustMenuLoader:
     
     def load_all_files(self):
         """Load all today's files with progress tracking"""
+        start_time = time.time()
         files = self.find_todays_files()
         self.total_files = len(files)
         
@@ -80,6 +82,24 @@ class RobustMenuLoader:
             
             # Small delay to avoid overwhelming the system
             time.sleep(1)
+        
+        # Log job completion
+        duration_ms = int((time.time() - start_time) * 1000)
+        records_processed = len(self.successful_files)
+        
+        if len(self.failed_files) == 0:
+            status = "success"
+        elif len(self.successful_files) > 0:
+            status = "partial"
+        else:
+            status = "failed"
+        
+        analytics.log_daily_job_status(
+            job_name="data_load",
+            status=status,
+            duration_ms=duration_ms,
+            records_processed=records_processed
+        )
     
     def generate_report(self):
         """Generate a summary report"""

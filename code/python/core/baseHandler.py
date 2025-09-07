@@ -11,6 +11,7 @@ Backwards compatibility is not guaranteed at this time.
 from core.retriever import search
 import asyncio
 import importlib
+import time
 import core.query_analysis.decontextualize as decontextualize
 import core.query_analysis.analyze_query as analyze_query
 import core.query_analysis.memory as memory   
@@ -29,6 +30,7 @@ from misc.logger.logger import get_logger, LogLevel
 from misc.logger.logging_config_helper import get_configured_logger
 from core.config import CONFIG
 from core.storage import add_conversation
+import analytics
 
 logger = get_configured_logger("nlweb_handler")
 
@@ -322,6 +324,31 @@ class NLWebHandler:
                 
             await self.post_ranking_tasks()
             
+            # Log final analytics metrics
+            try:
+                # Count final sources
+                sources_count = len(self.final_ranked_answers) if self.final_ranked_answers else 0
+                
+                # Determine final status
+                final_status = "success"
+                if sources_count == 0:
+                    final_status = "empty"
+                elif self.query_is_irrelevant:
+                    final_status = "irrelevant"
+                
+                # Log enhanced ask answered event with final metrics
+                if hasattr(self, 'http_handler') and self.http_handler:
+                    # For streaming requests, we'll log this in the API layer
+                    pass
+                else:
+                    # For non-streaming requests, log here
+                    analytics.log_ask_answered(
+                        None, None, self.query, final_status, sources_count, 0,
+                        self.site, None, self.model, len(self.final_retrieved_items) if self.final_retrieved_items else 0
+                    )
+            except Exception as e:
+                logger.error(f"Failed to log final analytics: {e}")
+            
             # Store conversation if user is authenticated
             if self.oauth_id and self.thread_id:
                 logger.info(f"Storing conversation for oauth_id: {self.oauth_id}, thread_id: {self.thread_id}")
@@ -405,14 +432,34 @@ class NLWebHandler:
                 self.retrieval_done_event.set()
             else:
                 logger.info("Retrieval not done by fast track, performing regular retrieval")
+                
+                # Track search start time for Qdrant metrics
+                search_start_time = time.time()
+                
                 items = await search(
                     self.decontextualized_query, 
                     self.site,
                     query_params=self.query_params,
                     handler=self
                 )
+                
+                # Calculate search metrics
+                search_time_ms = int((time.time() - search_start_time) * 1000)
+                
                 self.final_retrieved_items = items
                 logger.debug(f"Retrieved {len(items)} items from database")
+                
+                # Log Qdrant metrics
+                try:
+                    analytics.log_qdrant_metrics(
+                        hits_count=len(items),
+                        total_points=0,  # Will be updated if we can get collection info
+                        search_time_ms=search_time_ms,
+                        collection_name=str(self.site)
+                    )
+                except Exception as e:
+                    logger.error(f"Failed to log Qdrant metrics: {e}")
+                
                 self.retrieval_done_event.set()
         
         logger.info("Preparation phase completed")

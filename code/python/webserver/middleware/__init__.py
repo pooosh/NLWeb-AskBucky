@@ -5,6 +5,7 @@ from .error_handler import error_middleware
 from .logging_middleware import logging_middleware
 from .auth import auth_middleware
 from .streaming import streaming_middleware
+import analytics
 
 
 def setup_middleware(app):
@@ -16,6 +17,7 @@ def setup_middleware(app):
     app.middlewares.append(cors_middleware)
     app.middlewares.append(auth_middleware)
     app.middlewares.append(streaming_middleware)
+    app.middlewares.append(analytics.analytics_middleware)
 
 
 __all__ = [
